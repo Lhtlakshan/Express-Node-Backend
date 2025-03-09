@@ -1,31 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const productRoute = require("./routes/product.route.js");
 
 const app = express();
-const port = 4000;
+const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello world");
-});
+//middleware
+app.use(express.json());
 
-app.post("/post", (req, res) => {
-  res.send("Post response");
-});
-
-app.put("/put", (req, res) => {
-  res.send("put response");
-});
-
-app.delete("/delete", (req, res) => {
-  res.send("delete response");
-});
+//routes
+app.use("/api/products" , productRoute);
 
 
 //query param
 
-app.get("/users/:userId/books/:bookId", (req, res) => {
-  res.send(req.params);
-});
+// app.get("/users/:userId/books/:bookId", (req, res) => {
+//   res.send(req.params);
+// });
 
 app.get(
   "/example/b",
@@ -38,13 +29,16 @@ app.get(
   }
 );
 
-mongoose.connect(
-  "mongodb+srv://thilinalakhewage99:9mjz0WsiawMD757o@backenddb.czfxt.mongodb.net/Node-Express-API?retryWrites=true&w=majority&appName=BackendDB"
-).then(()=>{
-  console.log("Connected to the database");
-  app.listen(port, () => {
-    console.log(`app is running the port number : ${port}`);
+mongoose
+  .connect(
+    "mongodb+srv://thilinalakhewage99:9mjz0WsiawMD757o@backenddb.czfxt.mongodb.net/Node-Express-API?retryWrites=true&w=majority&appName=BackendDB"
+  )
+  .then(() => {
+    console.log("Connected to the database");
+    app.listen(port, () => {
+      console.log(`app is running the port number : ${port}`);
+    });
+  })
+  .catch(() => {
+    console.log("Connection failed");
   });
-}).catch(()=>{
-  console.log("Connection failed");
-});
