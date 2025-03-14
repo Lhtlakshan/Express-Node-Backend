@@ -8,7 +8,6 @@ const addProduct = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 const getAllProducts = async (req, res) => {
   try {
     const product = await Product.find({});
