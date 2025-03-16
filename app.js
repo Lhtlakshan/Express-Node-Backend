@@ -1,6 +1,9 @@
 const express = require("express");
+
 const mongoose = require("mongoose");
 const productRoute = require("./routes/product.route.js");
+const userRouter = require("./routes/user.route.js");
+const Product = require("./models/product.model.js");
 
 const app = express();
 const port = 3000;
@@ -10,6 +13,8 @@ app.use(express.json());
 
 //routes
 app.use("/api/products" , productRoute);
+
+app.use("/api/user" , userRouter)
 
 
 //query param
