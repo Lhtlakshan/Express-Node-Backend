@@ -5,11 +5,31 @@ const productRoute = require("./routes/product.route.js");
 const userRouter = require("./routes/user.route.js");
 const Product = require("./models/product.model.js");
 
+const jwt = require('jsonwebtoken');
+
 const app = express();
 const port = 3000;
 
 //middleware
 app.use(express.json());
+
+//middleware
+app.use(
+  (req,res,next)=>{
+    const header = req.header("Authorization");
+    if(header != null){
+      const token = header.replace("Bearer ","");
+      jwt.verify(token, "random1234" , (err,decoded)=>{
+        console.log(decoded);
+
+        if(decoded != null){
+          req.user = decoded;
+        }
+      });
+    }
+    next();
+}
+)
 
 //routes
 app.use("/api/products" , productRoute);
@@ -21,7 +41,7 @@ app.use("/api/user" , userRouter)
 
 // app.get("/users/:userId/books/:bookId", (req, res) => {
 //   res.send(req.params);
-// });
+// });..
 
 app.get(
   "/example/b",

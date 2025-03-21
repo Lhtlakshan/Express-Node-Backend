@@ -2,6 +2,12 @@ const Product = require("../models/product.model.js");
 
 const addProduct = async (req, res) => {
   try {
+    if(req.user.role != "admin"){
+      res.status(403).json({
+        message: "You cannot add a product..."
+      })
+      return;
+    }
     const product = await Product.create(req.body);
     res.status(200).json(product);
   } catch (err) {
