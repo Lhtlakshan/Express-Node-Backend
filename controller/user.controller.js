@@ -1,8 +1,22 @@
-const bcrypt = require('bcrypt');
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import User from "../models/user.js";
 
-const saveUser = (req,res)=>{
+export const saveUser = (req,res)=>{
+
+    if(req.body.role == "admin"){
+        if(req.user == null ){
+            res.status(403).json({
+                message : "Please login as an admin to create an admin user"
+            })
+        }
+
+        if(req.user.role != "admin"){
+            res.status(403).json({
+              message: "Admin can only create admin users",
+            });
+        }
+    }
     const bcryptPassword = bcrypt.hashSync(req.body.password , 10);
     const user = new User({
       name: req.body.name,
@@ -13,54 +27,87 @@ const saveUser = (req,res)=>{
     });
 
     user.save().then(()=>{
-        res.json({
+        res.status(200).json({
             message:"user saved"
         })
     }).catch((err)=>{
-        res.json({
-            message:"user was not saved"
-        })
+        res.status(500).json({
+          message: "user was not saved",
+        });
     })
 }
 
-const loginUser = (req,res)=>{
+export const loginUser = (req,res)=>{
     const email = req.body.username;
     const password = req.body.password;
 
     User.findOne({
-        email: email
+        email:email
     }).then((user)=>{
-        if(user == null){
-            res.status(400).json({
-                message: "Invalid email"
-            })
-        }else{
-            isPasswordCorrect = bcrypt.compareSync(password , user.password);
+        if(user != null){
+            const isPasswordCorrect = bcrypt.compareSync(password , user.password);
+
             if(isPasswordCorrect){
                 const userData = {
-                    name :user.name,
-                    email :user.email,
-                    password :user.password,
+                    name: user.name,
+                    email: user.email,
                     address : user.address,
+                    isEmailVerified : user.isEmailVerified,
+                    isDisabled : user.isDisabled,
                     role : user.role
                 }
 
-                const token = jwt.sign(userData , "random1234");
-                
+                const token = jwt.sign(userData , "random123");
+
                 res.json({
                     message: "Login successfull",
                     token : token
                 })
             }else{
-                res.json({
-                  message: "Invalid password",
-                });
+                res.status(403).json({
+                    message : "Invalid password"
+                })
             }
+        }else{
+            res.json({
+                message : "Invalid email"
+            })
         }
     })
 }
 
-module.exports = {
-    saveUser,
-    loginUser
-}
+
+//  const email = req.body.username;
+//     const password = req.body.password;
+
+//     User.findOne({
+//         email: email
+//     }).then((user)=>{
+//         if(user == null){
+//             res.status(400).json({
+//                 message: "Invalid email"
+//             })
+//         }else{
+//             isPasswordCorrect = bcrypt.compareSync(password , user.password);
+//             if(isPasswordCorrect){
+//                 const userData = {
+//                     name :user.name,
+//                     email :user.email,
+//                     password :user.password,
+//                     address : user.address,
+//                     role : user.role
+//                 }
+
+//                 const token = jwt.sign(userData , "random1234");
+                
+//                 res.json({
+//                     message: "Login successfull",
+//                     token : token
+//                 })
+//             }else{
+//                 res.json({
+//                   message: "Invalid password",
+//                 });
+//             }
+//         }
+//     })

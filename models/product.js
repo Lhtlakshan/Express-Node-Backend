@@ -1,7 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ProductSchema = mongoose.Schema(
   {
+    productId:{
+      type: String,
+      required: true,
+      unique: true
+    },
     name: {
       type: String,
       required: [true, "Please enter the product name"],
@@ -20,16 +25,12 @@ const ProductSchema = mongoose.Schema(
     },
 
     image: {
-      type: String,
+      type: [String],
       required: false,
     },
-  },
-
-  {
-    timestamps: true,
   }
 );
 
-const Product = mongoose.model("Product",ProductSchema);
+const Product = mongoose.model("product",ProductSchema);
 
-module.exports = Product;
+export default Product;

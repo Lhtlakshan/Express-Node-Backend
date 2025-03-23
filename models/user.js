@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const Userschema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -20,8 +20,26 @@ const Userschema = mongoose.Schema({
   role: {
     type: String,
     required: true,
+    default: "user"
   },
+  phone : {
+    type : String,
+    required : true,
+    default : "Not given"
+  },
+
+  isDisabled : {
+    type : Boolean,
+    required : true,
+    default : false
+  } , 
+
+  isEmailVeriified :{
+    type : Boolean,
+    required : true,
+    default : false
+  }
 });
 
-const User = mongoose.model("user", Userschema);
-module.exports = User;
+const User = mongoose.model("users", UserSchema);
+export default User;

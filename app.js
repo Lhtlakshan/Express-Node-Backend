@@ -1,11 +1,9 @@
-const express = require("express");
+import express from "express";
 
-const mongoose = require("mongoose");
-const productRoute = require("./routes/product.route.js");
-const userRouter = require("./routes/user.route.js");
-const Product = require("./models/product.model.js");
-
-const jwt = require('jsonwebtoken');
+import mongoose from "mongoose";
+import productRouter from "./routes/product.route.js";
+import userRouter from "./routes/user.route.js";
+import verifyJwt from "./middleware/auth.js";
 
 const app = express();
 const port = 3000;
@@ -14,28 +12,12 @@ const port = 3000;
 app.use(express.json());
 
 //middleware
-app.use(
-  (req,res,next)=>{
-    const header = req.header("Authorization");
-    if(header != null){
-      const token = header.replace("Bearer ","");
-      jwt.verify(token, "random1234" , (err,decoded)=>{
-        console.log(decoded);
-
-        if(decoded != null){
-          req.user = decoded;
-        }
-      });
-    }
-    next();
-}
-)
+app.use(verifyJwt);
 
 //routes
-app.use("/api/products" , productRoute);
+app.use("/api/products", productRouter);
 
-app.use("/api/user" , userRouter)
-
+app.use("/api/user", userRouter);
 
 //query param
 
